@@ -5,6 +5,7 @@ import PrivateLayout from "./layouts/PrivateLayout";
 
 import Landing from "./pages/public/Landing";
 import Login from "./pages/public/Login";
+import ForgotPassword from "./pages/public/ForgotPassword";
 import Register from "./pages/public/Register";
 import CompaniesComingSoon from "./pages/public/CompaniesComingSoon";
 
@@ -25,6 +26,7 @@ function App() {
       <Route element={<PublicLayout />}>
         <Route index element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/recuperar-password" element={<ForgotPassword />} />
         <Route path="/registro" element={<Register />} />
         <Route path="/empresas" element={<CompaniesComingSoon />} />
       </Route>
