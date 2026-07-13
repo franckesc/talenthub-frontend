@@ -19,6 +19,7 @@ import Interviews from "./pages/private/Interviews";
 import Messages from "./pages/private/Messages";
 import Notifications from "./pages/private/Notifications";
 import Settings from "./pages/private/Settings";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -31,18 +32,20 @@ function App() {
         <Route path="/empresas" element={<CompaniesComingSoon />} />
       </Route>
 
-      <Route element={<PrivateLayout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/empleos" element={<Jobs />} />
-        <Route path="/empleos/:id" element={<JobDetail />} />
-        <Route path="/perfil" element={<Profile />} />
-        <Route path="/mis-postulaciones" element={<Applications />} />
-        <Route path="/guardados" element={<SavedJobs />} />
-        <Route path="/entrevistas" element={<Interviews />} />
-        <Route path="/mensajes" element={<Messages />} />
-        <Route path="/notificaciones" element={<Notifications />} />
-        <Route path="/configuracion" element={<Settings />} />
-      </Route>
+      <Route element={<ProtectedRoute />}>
+  <Route element={<PrivateLayout />}>
+    <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/empleos" element={<Jobs />} />
+    <Route path="/empleos/:id" element={<JobDetail />} />
+    <Route path="/perfil" element={<Profile />} />
+    <Route path="/mis-postulaciones" element={<Applications />} />
+    <Route path="/guardados" element={<SavedJobs />} />
+    <Route path="/entrevistas" element={<Interviews />} />
+    <Route path="/mensajes" element={<Messages />} />
+    <Route path="/notificaciones" element={<Notifications />} />
+    <Route path="/configuracion" element={<Settings />} />
+  </Route>
+</Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

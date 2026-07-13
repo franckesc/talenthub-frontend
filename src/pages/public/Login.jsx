@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FiAlertCircle,
-  FiCheckCircle,
   FiEye,
   FiEyeOff,
   FiLock,
   FiMail,
 } from "react-icons/fi";
+import { useAuth } from "../../context/AuthContext";
+import api from "../../services/api";
 
 const initialForm = {
   correo: "",
@@ -16,10 +17,14 @@ const initialForm = {
 };
 
 function Login() {
+  const navigate = useNavigate();
+  const { saveSession } = useAuth();
+
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState("");
+  const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -34,7 +39,7 @@ function Login() {
       [name]: "",
     }));
 
-    setMessage("");
+    setServerError("");
   };
 
   const validateForm = () => {
@@ -49,28 +54,53 @@ function Login() {
     if (!form.password) {
       newErrors.password = "Ingresa tu contraseña.";
     } else if (form.password.length < 8) {
-      newErrors.password = "La contraseña debe tener al menos 8 caracteres.";
+      newErrors.password =
+        "La contraseña debe tener al menos 8 caracteres.";
     }
 
     return newErrors;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const validationErrors = validateForm();
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      setMessage("");
+      setServerError("");
       return;
     }
 
-    console.log("Datos de inicio de sesión:", form);
+    try {
+      setLoading(true);
+      setServerError("");
 
-    setMessage(
-      "Formulario validado correctamente. Falta conectarlo con la API de TalentHub.",
-    );
+      const response = await api.post("/auth/login", {
+        correo: form.correo.trim().toLowerCase(),
+        password: form.password,
+        recordar: form.recordar,
+      });
+
+      saveSession(
+        response.data.token,
+        response.data.usuario,
+        form.recordar,
+      );
+
+      navigate("/dashboard", {
+        replace: true,
+      });
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+
+      setServerError(
+        error.response?.data?.mensaje ||
+          "No fue posible iniciar sesión. Verifica tus datos.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -86,7 +116,11 @@ function Login() {
           </p>
         </div>
 
-        <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
+        <form
+          className="mt-8 space-y-5"
+          onSubmit={handleSubmit}
+          noValidate
+        >
           <div>
             <label
               htmlFor="correo"
@@ -109,8 +143,9 @@ function Login() {
                 onChange={handleChange}
                 placeholder="nombre@ejemplo.com"
                 autoComplete="email"
+                disabled={loading}
                 className={[
-                  "h-11 w-full rounded-md border bg-[#f8fafc] pl-10 pr-3 text-sm outline-none transition placeholder:text-slate-400",
+                  "h-11 w-full rounded-md border bg-[#f8fafc] pl-10 pr-3 text-sm outline-none transition placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-60",
                   errors.correo
                     ? "border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
                     : "border-slate-300 focus:border-[#103f73] focus:ring-2 focus:ring-blue-100",
@@ -156,8 +191,9 @@ function Login() {
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="current-password"
+                disabled={loading}
                 className={[
-                  "h-11 w-full rounded-md border bg-[#f8fafc] pl-10 pr-11 text-sm outline-none transition",
+                  "h-11 w-full rounded-md border bg-[#f8fafc] pl-10 pr-11 text-sm outline-none transition disabled:cursor-not-allowed disabled:opacity-60",
                   errors.password
                     ? "border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
                     : "border-slate-300 focus:border-[#103f73] focus:ring-2 focus:ring-blue-100",
@@ -166,10 +202,15 @@ function Login() {
 
               <button
                 type="button"
-                onClick={() => setShowPassword((current) => !current)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#103f73]"
+                onClick={() =>
+                  setShowPassword((current) => !current)
+                }
+                disabled={loading}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#103f73] disabled:cursor-not-allowed"
                 aria-label={
-                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                  showPassword
+                    ? "Ocultar contraseña"
+                    : "Mostrar contraseña"
                 }
               >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -190,24 +231,26 @@ function Login() {
               type="checkbox"
               checked={form.recordar}
               onChange={handleChange}
+              disabled={loading}
               className="h-4 w-4 rounded accent-[#103f73]"
             />
 
             Mantener mi sesión iniciada
           </label>
 
-          {message && (
-            <div className="flex items-start gap-2 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-              <FiCheckCircle className="mt-0.5 shrink-0" />
-              <p>{message}</p>
+          {serverError && (
+            <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <FiAlertCircle className="mt-0.5 shrink-0" />
+              <p>{serverError}</p>
             </div>
           )}
 
           <button
             type="submit"
-            className="h-11 w-full rounded-md bg-[#103f73] text-sm font-semibold text-white transition hover:bg-[#0b315d] focus:outline-none focus:ring-2 focus:ring-[#103f73] focus:ring-offset-2"
+            disabled={loading}
+            className="h-11 w-full rounded-md bg-[#103f73] text-sm font-semibold text-white transition hover:bg-[#0b315d] focus:outline-none focus:ring-2 focus:ring-[#103f73] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Iniciar sesión
+            {loading ? "Iniciando sesión..." : "Iniciar sesión"}
           </button>
         </form>
 
