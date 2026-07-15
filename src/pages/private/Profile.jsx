@@ -165,83 +165,85 @@ function Profile() {
         </div>
 
         <div className="relative px-5 pb-6 sm:px-7">
-          <div className="-mt-16 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end">
-              {usuario.foto_perfil_url ? (
-                <img
-                  src={usuario.foto_perfil_url}
-                  alt={nombreCompleto}
-                  className="h-32 w-32 rounded-full border-4 border-white bg-white object-cover shadow-md"
-                />
-              ) : (
-                <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-blue-500 text-3xl font-bold text-white shadow-md">
-                  {iniciales}
-                </div>
-              )}
-
-              <div className="pb-1">
-                <h1 className="text-2xl font-bold text-slate-950">
-                  {nombreCompleto}
-                </h1>
-
-                <p className="mt-1 text-sm font-medium text-slate-600">
-                  {tituloProfesional}
-                </p>
-
-                <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500">
-                  <span className="inline-flex items-center gap-1.5">
-                    <FiMapPin />
-                    {ubicacion}
-                  </span>
-
-                  <span className="inline-flex items-center gap-1.5">
-                    <FiBriefcase />
-                    {formatExperience(usuario.experiencia_anios)}
-                  </span>
-
-                  {usuario.disponibilidad && (
-                    <span className="inline-flex items-center gap-1.5 text-green-700">
-                      <FiCheckCircle />
-                      {usuario.disponibilidad}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2 pb-1">
-              {usuario.cv_url ? (
-                <a
-                  href={usuario.cv_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                >
-                  <FiDownload />
-                  Descargar CV
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-400"
-                >
-                  <FiDownload />
-                  CV no disponible
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={() => setShowEditNotice(true)}
-                className="inline-flex h-10 items-center gap-2 rounded-md bg-[#103f73] px-5 text-sm font-semibold text-white transition hover:bg-[#0b315d]"
-              >
-                <FiEdit3 />
-                Editar perfil
-              </button>
-            </div>
+  <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end">
+      <div className="-mt-16 shrink-0">
+        {usuario.foto_perfil_url ? (
+          <img
+            src={usuario.foto_perfil_url}
+            alt={nombreCompleto}
+            className="h-32 w-32 rounded-full border-4 border-white bg-white object-cover shadow-md"
+          />
+        ) : (
+          <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-blue-500 text-3xl font-bold text-white shadow-md">
+            {iniciales}
           </div>
+        )}
+      </div>
+
+      <div className="pb-1 sm:pt-4">
+        <h1 className="text-2xl font-bold text-slate-950">
+          {nombreCompleto}
+        </h1>
+
+        <p className="mt-1 text-sm font-medium text-slate-600">
+          {tituloProfesional}
+        </p>
+
+        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500">
+          <span className="inline-flex items-center gap-1.5">
+            <FiMapPin />
+            {ubicacion}
+          </span>
+
+          <span className="inline-flex items-center gap-1.5">
+            <FiBriefcase />
+            {formatExperience(usuario.experiencia_anios)}
+          </span>
+
+          {usuario.disponibilidad && (
+            <span className="inline-flex items-center gap-1.5 text-green-700">
+              <FiCheckCircle />
+              {usuario.disponibilidad}
+            </span>
+          )}
         </div>
+      </div>
+    </div>
+
+    <div className="flex flex-wrap gap-2 pb-1">
+      {usuario.cv_url ? (
+        <a
+          href={usuario.cv_url}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          <FiDownload />
+          Descargar CV
+        </a>
+      ) : (
+        <button
+          type="button"
+          disabled
+          className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-400"
+        >
+          <FiDownload />
+          CV no disponible
+        </button>
+      )}
+
+      <button
+        type="button"
+        onClick={() => setShowEditNotice(true)}
+        className="inline-flex h-10 items-center gap-2 rounded-md bg-[#103f73] px-5 text-sm font-semibold text-white transition hover:bg-[#0b315d]"
+      >
+        <FiEdit3 />
+        Editar perfil
+      </button>
+    </div>
+  </div>
+</div>
       </article>
 
       <div className="mt-5 grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
